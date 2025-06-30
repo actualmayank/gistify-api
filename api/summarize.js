@@ -1,29 +1,25 @@
 const HUGGINGFACE_TOKEN = process.env.HUGGINGFACE_TOKEN;
 
 export default async function handler(req, res) {
-  // ✅ Allow CORS
+
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ Handle preflight request
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // ✅ Restrict to POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Only POST requests allowed" });
   }
 
   const { text } = req.body || {};
 
-  // ✅ Check for missing or short text
   if (!text || text.trim().length < 20) {
     return res.status(400).json({ error: "Text too short or missing." });
   }
 
-  // ✅ Check if token is available
   if (!HUGGINGFACE_TOKEN) {
     return res.status(500).json({ error: "Missing Hugging Face token." });
   }
